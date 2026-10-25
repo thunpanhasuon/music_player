@@ -5,8 +5,8 @@ LDLIBS := -lncurses
 
 BUILD_DIR := build
 TARGET := $(BUILD_DIR)/music
-SOURCES := main.c src/music.c
-HEADERS := include/music.h
+SOURCES := main.c src/music.c src/audio_cd_animition.c src/audio_visualizer.c
+HEADERS := include/music.h include/audio_cd_animition.h include/audio_visualizer.h include/ui_colors.h
 
 .PHONY: all run clean
 
