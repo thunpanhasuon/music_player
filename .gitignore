@@ -4,3 +4,7 @@ build/
 # Keep local media out of the repository.
 /assets/*
 !/assets/.gitkeep
+
+# Local images
+/reimu.jpg
+/touhou.jpg
