@@ -12,6 +12,8 @@
 #include "ui_colors.h"
 #include "music.h"
 
+#define MAX_HEIGHT_LIB 10
+#define MAX_LINES 7 
 
 static void init_ui_colors(void) {
   if (!has_colors()) {
@@ -58,6 +60,8 @@ int main(void) {
   }
 
   int selected = 0;
+  int offset_selected = 0; 
+  int libary_win_height = MAX_HEIGHT_LIB - 3; 
   MusicPlayer music_player = {.pid = -1, .playing = -1};
 
   int max_y, max_x;
@@ -69,7 +73,7 @@ int main(void) {
     return 1;
   }
 
-  WINDOW *library = newwin(10, max_x - 4, 2, 2);
+  WINDOW *library = newwin(MAX_HEIGHT_LIB, max_x - 4, 2, 2);
   WINDOW *player = newwin(7, max_x - 4, 12, 2);
 
   const int audio_y = 19;
@@ -105,21 +109,31 @@ int main(void) {
     mvwprintw(library, 0, 2, " LIBRARY ");
     wattroff(library, COLOR_PAIR(BLUE_PAIR) | A_BOLD);
 
-    for (int i = 0; i < song_count && i < 7; i++) {
-      if (i == selected) {
+    for (int i = 0; i < libary_win_height && offset_selected + i < song_count; i++) {
+      
+      if (selected < offset_selected) {
+        offset_selected = selected; 
+      } else if (selected >= offset_selected + libary_win_height) {
+        offset_selected = selected - libary_win_height + 1; 
+      }
+
+      int song_index = offset_selected + i; 
+
+      if (song_index == selected) {
         wattron(library, COLOR_PAIR(GREEN_PAIR) | A_BOLD);
       }
 
       wmove(library, 2 + i, 2);
-      wprintw(library, "%c %02d. ", i == selected ? '>' : ' ', i + 1);
-
-      wchar_t *wide_song = convert_utf8_to_wc(songs[i]);
-      if (wide_song != NULL) {
-        waddwstr(library, wide_song);
-        free(wide_song);
+      wprintw(library, "%c %02d. ", song_index == selected ? '>' : ' ', song_index + 1);
+      if (song_index < song_count) {
+        wchar_t *wide_song = convert_utf8_to_wc(songs[song_index]);
+        if (wide_song != NULL) {
+          waddwstr(library, wide_song);
+          free(wide_song);
+        }
       }
 
-      if (i == selected) {
+      if (song_index == selected) {
         wattroff(library, COLOR_PAIR(GREEN_PAIR) | A_BOLD);
       }
     }
