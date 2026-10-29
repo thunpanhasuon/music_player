@@ -1,2 +1,6 @@
 build/
 .DS_Store
+
+# Keep local media out of the repository.
+/assets/*
+!/assets/.gitkeep
